@@ -17,7 +17,7 @@ const HeroSection = () => {
         text-neutral-400 max-w-lg mx-auto text-center">
             Dive into our comprehensive Music course 
             and transform your Music journey today.Whether
-            you're a beginner or looking to refine your skills,
+            you&apos;re a beginner or looking to refine your skills,
             join us to unlock your true potential</p>
         <div className="mx-auto">
                 <Link href={"/courses"}>

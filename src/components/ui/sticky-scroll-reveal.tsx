@@ -1,22 +1,23 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, ReactNode } from "react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
 
-export const StickyScroll = ({
-  content,
-  contentClassName,
-}: {
-  content: {
-    title: string;
-    description: string;
-    content?: React.ReactNode | any;
-  }[];
+interface ContentItem {
+  title: string;
+  description: string;
+  content?: ReactNode;
+}
+
+interface StickyScrollProps {
+  content: ContentItem[];
   contentClassName?: string;
-}) => {
+}
+
+export const StickyScroll = ({ content, contentClassName }: StickyScrollProps) => {
   const [activeCard, setActiveCard] = useState(0);
-  const ref = useRef<any>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     container: ref,
     offset: ["start start", "end start"],
@@ -52,8 +53,8 @@ export const StickyScroll = ({
   const [backgroundGradient, setBackgroundGradient] = useState(
     linearGradients[0]
   );
-  // Hide the scrollbar but keep scrolling
-const styles = `
+
+  const styles = `
 .scroll-hidden {
   scrollbar-width: none; /* For Firefox */
   -ms-overflow-style: none; /* For Internet Explorer and Edge */
@@ -64,12 +65,16 @@ const styles = `
 }
 `;
 
-// Inject the styles into the document's head
-if (typeof document !== 'undefined') { const styleSheet = document.createElement("style"); styleSheet.type = "text/css"; styleSheet.innerText = styles; document.head.appendChild(styleSheet); }
+  if (typeof document !== 'undefined') {
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = styles;
+    document.head.appendChild(styleSheet);
+  }
 
   useEffect(() => {
     setBackgroundGradient(linearGradients[activeCard % linearGradients.length]);
-  }, [activeCard]);
+  }, [activeCard, linearGradients]);
 
   return (
     <motion.div
@@ -114,3 +119,4 @@ if (typeof document !== 'undefined') { const styleSheet = document.createElement
     </motion.div>
   );
 };
+

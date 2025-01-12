@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, MouseEvent } from "react";
 import {
   motion,
   useTransform,
@@ -21,25 +21,29 @@ export const AnimatedTooltip = ({
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const springConfig = { stiffness: 100, damping: 5 };
+
   const x = useMotionValue(0); // going to set this value on mouse move
-  // rotate the tooltip
+
+  // Rotate the tooltip
   const rotate = useSpring(
     useTransform(x, [-100, 100], [-45, 45]),
     springConfig
   );
-  // translate the tooltip
+
+  // Translate the tooltip
   const translateX = useSpring(
     useTransform(x, [-100, 100], [-50, 50]),
     springConfig
   );
-  const handleMouseMove = (event: any) => {
-    const halfWidth = event.target.offsetWidth / 2;
+
+  const handleMouseMove = (event: MouseEvent<HTMLImageElement>) => {
+    const halfWidth = event.currentTarget.offsetWidth / 2;
     x.set(event.nativeEvent.offsetX - halfWidth); // set the x value, which is then used in transform and rotate
   };
 
   return (
     <>
-      {items.map((item, idx) => (
+      {items.map((item) => (
         <div
           className="-mr-4  relative group"
           key={item.name}
@@ -62,8 +66,8 @@ export const AnimatedTooltip = ({
                 }}
                 exit={{ opacity: 0, y: 20, scale: 0.6 }}
                 style={{
-                  translateX: translateX,
-                  rotate: rotate,
+                  translateX: translateX.get(),
+                  rotate: rotate.get(),
                   whiteSpace: "nowrap",
                 }}
                 className="absolute -top-16 -left-1/2 translate-x-1/2 flex text-xs  flex-col items-center justify-center rounded-md bg-black z-50 shadow-xl px-4 py-2"

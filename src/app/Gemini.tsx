@@ -1,53 +1,49 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {Card,CardContent,CardFooter,CardHeader,CardTitle} from '../components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
-import {X,MessageCircle,Send,Loader2,ArrowDownCircleIcon} from 'lucide-react'
-import {motion,AnimatePresence} from 'framer-motion'
-import {useChat} from '@ai-sdk/react'
+import { X, MessageCircle, Send, Loader2, ArrowDownCircleIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useChat } from '@ai-sdk/react';
 import { Button } from '../components/ui/button';
 
-const Gemini = () => {
+interface CodeProps {
+  inline?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+  [key: string]: any;
+}
 
-  const [isChatOpen,setIsChatOpen] = useState(false);
+const Gemini = () => {
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [showChatIcon, setIsChatIcon] = useState(false);
   const chatIconRef = useRef<HTMLButtonElement>(null);
-  const {messages,input,handleInputChange,isLoading,handleSubmit,stop,reload,error}
-  =useChat({api:'/api/gemini'});
-  
-  const scrollRef=useRef<HTMLDivElement>(null);
-  
+  const { messages, input, handleInputChange, isLoading, handleSubmit, stop, reload, error } = useChat({ api: '/api/gemini' });
+
   useEffect(() => {
     const handleScroll = () => {
-      if(window.scrollY > 100){
+      if (window.scrollY > 100) {
         setIsChatIcon(true);
-        
-      }else{
+      } else {
         setIsChatIcon(false);
         setIsChatOpen(false);
       }
-    }  
+    };
 
     handleScroll();
-
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
-    }
-  },[])
-
-  useEffect(()=>{
-    if(scrollRef.current){
-      scrollRef.current.scrollIntoView({behavior:"smooth"})
-    }
-  },[messages])
+    };
+  }, []);
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   }
+
   return (
     <div>
       <AnimatePresence>
@@ -57,7 +53,7 @@ const Gemini = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-4 right-4 cursor-pointer z-50 "
+            className="fixed bottom-4 right-4 cursor-pointer z-50"
             onClick={toggleChat}
           >
             <Button ref={chatIconRef} onClick={toggleChat} className="rounded-full size-14 p-2 shadow-lg">
@@ -94,10 +90,9 @@ const Gemini = () => {
                     <div key={index} className={`mb-4 p-1 ${message.role === "user" ? "text-right" : "text-left"}`}>
                       <div className={`inline-block p-1 rounded-lg ${message.role === "user" ? "bg-slate-700" : "bg-muted"}`}>
                         <ReactMarkdown
-                          children={message.content}
                           remarkPlugins={[remarkGfm]}
                           components={{
-                            code({ node, inline, className, children, ...props }) {
+                            code({ inline, children, ...props }: CodeProps) {
                               return inline ? (
                                 <code {...props} className="bg-gray-200 px-1 rounded">
                                   {children}
@@ -112,10 +107,12 @@ const Gemini = () => {
                               return <ul className="list-disc ml-4">{children}</ul>;
                             },
                             ol({ children }) {
-                              return <li className="list-decimal ml-4">{children}</li>;
+                              return <ol className="list-decimal ml-4">{children}</ol>;
                             },
                           }}
-                        />
+                        >
+                          {message.content}
+                        </ReactMarkdown>
                       </div>
                     </div>
                   ))}
@@ -156,4 +153,5 @@ const Gemini = () => {
   );
 }
 
-export default Gemini
+export default Gemini;
+

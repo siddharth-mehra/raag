@@ -3,18 +3,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
 
-export const HoverEffect = ({
-  items,
-  className,
-}: {
-  items: {
-    title: string;
-    description: string;
-    link: string;
-  }[];
+interface Item {
+  title: string;
+  description: string;
+  link: string;
+}
+
+interface HoverEffectProps {
+  items: Item[];
   className?: string;
-}) => {
-  let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+}
+
+export const HoverEffect = ({ items, className }: HoverEffectProps) => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
     <div
@@ -25,16 +26,16 @@ export const HoverEffect = ({
     >
       {items.map((item, idx) => (
         <Link
-          href={item?.link}
-          key={item?.link}
-          className="relative group  block p-2 h-full w-full"
+          href={item.link}
+          key={item.link}
+          className="relative group block p-2 h-full w-full"
           onMouseEnter={() => setHoveredIndex(idx)}
           onMouseLeave={() => setHoveredIndex(null)}
         >
           <AnimatePresence>
             {hoveredIndex === idx && (
               <motion.span
-                className="absolute inset-0 h-full w-full bg-neutral-200 dark:bg-slate-400/[0.8] block  rounded-3xl"
+                className="absolute inset-0 h-full w-full bg-neutral-200 dark:bg-slate-400/[0.8] block rounded-3xl"
                 layoutId="hoverBackground"
                 initial={{ opacity: 0 }}
                 animate={{
@@ -58,13 +59,12 @@ export const HoverEffect = ({
   );
 };
 
-export const Card = ({
-  className,
-  children,
-}: {
+interface CardProps {
   className?: string;
   children: React.ReactNode;
-}) => {
+}
+
+export const Card = ({ className, children }: CardProps) => {
   return (
     <div
       className={cn(
@@ -78,26 +78,16 @@ export const Card = ({
     </div>
   );
 };
-export const CardTitle = ({
-  className,
-  children,
-}: {
-  className?: string;
-  children: React.ReactNode;
-}) => {
+
+export const CardTitle = ({ className, children }: CardProps) => {
   return (
     <h4 className={cn("text-zinc-100 font-bold tracking-wide mt-4", className)}>
       {children}
     </h4>
   );
 };
-export const CardDescription = ({
-  className,
-  children,
-}: {
-  className?: string;
-  children: React.ReactNode;
-}) => {
+
+export const CardDescription = ({ className, children }: CardProps) => {
   return (
     <p
       className={cn(
@@ -109,3 +99,4 @@ export const CardDescription = ({
     </p>
   );
 };
+
